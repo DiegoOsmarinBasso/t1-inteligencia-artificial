@@ -1,12 +1,12 @@
-package chess;
+package maze;
 
 import boardgame.BoardException;
 
-public class ChessException extends BoardException {
+public class MazeException extends BoardException {
 
 	private static final long serialVersionUID = 1L;
 
-	public ChessException(String msg) {
+	public MazeException(String msg) {
 		super(msg);
 	}
 }

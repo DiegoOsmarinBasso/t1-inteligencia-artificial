@@ -5,55 +5,41 @@ import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
-import chess.ChessException;
-import chess.ChessMatch;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import boardgame.Position;
+import maze.MazeException;
+import maze.MazeMatch;
+import maze.pieces.Bag;
 
 public class Program {
 
 	public static void main(String[] args) {
 
 		Scanner sc = new Scanner(System.in);
-		ChessMatch chessMatch = new ChessMatch();
-		List<ChessPiece> captured = new ArrayList<>();
+		MazeMatch mazeMatch = new MazeMatch();
+		List<Bag> captured = new ArrayList<>();
 
-		while (!chessMatch.getCheckMate()) {
+		while (!mazeMatch.getFinalizeMaze()) {
 			try {
 				UI.clearScreen();
-				UI.printMatch(chessMatch, captured, args);
+				UI.printMatch(mazeMatch, captured);
 
 				System.out.println();
 				System.out.print("Source: ");
-				ChessPosition source = UI.readChessPosition(sc);
-
-				boolean[][] possibleMoves = chessMatch.possibleMoves(source);
-				UI.clearScreen();
-				if (args.length == 0) {
-					UI.printBoard(chessMatch.getPieces(), possibleMoves, source.toPosition().getRow(),
-							source.toPosition().getColumn());
-				} else {
-					UI.printTabBoard(chessMatch.getPieces(), possibleMoves, source.toPosition().getRow(),
-							source.toPosition().getColumn());
-				}
+				Position source = UI.readPosition(sc);
+				mazeMatch.validateSourcePosition(source);
 
 				System.out.println();
 				System.out.print("Target: ");
-				ChessPosition target = UI.readChessPosition(sc);
+				Position target = UI.readPosition(sc);
+				mazeMatch.validateTargetPosition(target);
 
-				ChessPiece capturedPiece = chessMatch.performChessMove(source, target);
+				Bag capturedBag = mazeMatch.performMazeMove(source, target);
 
-				if (capturedPiece != null) {
-					captured.add(capturedPiece);
+				if (capturedBag != null) {
+					captured.add(capturedBag);
 				}
 
-				if (chessMatch.getPromoted() != null) {
-					System.out.print("Enter piece for promotion (B/N/R/Q): ");
-					String type = sc.nextLine();
-					chessMatch.replacePromotedPiece(type);
-				}
-
-			} catch (ChessException e) {
+			} catch (MazeException e) {
 				System.out.println(e.getMessage());
 				sc.nextLine();
 			} catch (InputMismatchException e) {
@@ -62,6 +48,6 @@ public class Program {
 			}
 		}
 		UI.clearScreen();
-		UI.printMatch(chessMatch, captured, args);
+		UI.printMatch(mazeMatch, captured);
 	}
 }

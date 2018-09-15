@@ -4,12 +4,12 @@ import java.util.Arrays;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
-import java.util.stream.Collectors;
 
-import chess.ChessMatch;
-import chess.ChessPiece;
-import chess.ChessPosition;
-import chess.Color;
+import boardgame.Position;
+import maze.Color;
+import maze.MazeMatch;
+import maze.MazePiece;
+import maze.pieces.Bag;
 
 public class UI {
 
@@ -54,126 +54,73 @@ public class UI {
 		System.out.flush();
 	}
 
-	public static ChessPosition readChessPosition(Scanner sc) {
+	public static Position readPosition(Scanner sc) {
 		try {
 			String s = sc.nextLine();
-			char column = s.charAt(0);
-			int row = Integer.parseInt(s.substring(1));
+			int row = Integer.parseInt(s.substring(0,1));
+			int column = Integer.parseInt(s.substring(1,2));
 
-			return new ChessPosition(column, row);
+			return new Position(row, column);
 		} catch (RuntimeException e) {
-			throw new InputMismatchException("Error reading ChessPosition. Valid values are from a1 to h8.");
+			throw new InputMismatchException("Error reading MazePosition. Valid values are from 00 to 99.");
 		}
 	}
 
-	private static void printPiece(ChessPiece piece, boolean background, boolean selfBackground) {
-		if (selfBackground) {
-			System.out.print(ANSI_CYAN_BACKGROUND);
-		}
-		if (background) {
-			System.out.print(ANSI_BLUE_BACKGROUND);
-		}
+	private static void printPiece(MazePiece piece) {
 		if (piece == null) {
 			System.out.print("-" + ANSI_RESET);
 		} else {
-			if (piece.getColor() == Color.WHITE) {
-				System.out.print(WHITE_BOLD_BRIGHT + piece + ANSI_RESET);
-			} else {
+			Color color = piece.getColor();
+			if (color == Color.CYAN) {
+				System.out.print(ANSI_CYAN_BACKGROUND + piece + ANSI_RESET);
+			} else if (color == Color.GREEN) {
+				System.out.print(GREEN_BOLD_BRIGHT + piece + ANSI_RESET);
+			} else if (color == Color.PURPLE) {
+				System.out.print(PURPLE_BOLD_BRIGHT + piece + ANSI_RESET);
+			} else if (color == Color.RED) {
+				System.out.print(RED_BOLD_BRIGHT + piece + ANSI_RESET);
+			} else if (color == Color.YELLOW) {
 				System.out.print(YELLOW_BOLD_BRIGHT + piece + ANSI_RESET);
+			} else if (color == Color.WHITE) {
+				System.out.print(WHITE_BOLD_BRIGHT + piece + ANSI_RESET);
 			}
 		}
 	}
 
-	public static void printMatch(ChessMatch chessMatch, List<ChessPiece> captured, String[] args) {
-		if (args.length > 0) {
-			printTabBoard(chessMatch.getPieces());
-		} else {
-			printBoard(chessMatch.getPieces());
-		}
-		System.out.println();
-		printCapturedPieces(captured);
-		System.out.println();
-		System.out.println("Turn: " + chessMatch.getTurn());
+	public static void printMatch(MazeMatch chessMatch, List<Bag> captured) {
 
-		if (!chessMatch.getCheckMate()) {
-			System.out.println("Waiting player: " + chessMatch.getCurrentPlayer());
-			if (chessMatch.getCheck()) {
-				System.out.println("CHECK!");
+		printTabBoard(chessMatch.getPieces());
+
+		printCapturedBags(captured);
+		System.out.println();
+
+		if (!chessMatch.getFinalizeMaze()) {
+			if (chessMatch.getAllBags()) {
+				System.out.println("ALL BAGS!");
 			}
 		} else {
-			System.out.println("CHECKMATE!");
-			System.out.println("Winner: " + chessMatch.getCurrentPlayer());
+			System.out.println("MAZE OVER!");
 		}
 	}
 
-	public static void printBoard(ChessPiece[][] pieces) {
+	public static void printTabBoard(MazePiece[][] pieces) {
 		int rows = pieces.length;
 		int columns = pieces[0].length;
 
+		System.out.println("    0   1   2   3   4   5   6   7   8   9   \n");
 		for (int i = 0; i < rows; i++) {
-			System.out.print((rows - i) + " ");
+			System.out.print(i + "   ");
 			for (int j = 0; j < columns; j++) {
-				printPiece(pieces[i][j], false, false);
-				System.out.print(" ");
-			}
-			System.out.println();
-		}
-		System.out.println("  a b c d e f g h");
-	}
-
-	public static void printBoard(ChessPiece[][] pieces, boolean[][] possibleMoves, int selfRow, int selfColumn) {
-		int rows = pieces.length;
-		int columns = pieces[0].length;
-
-		for (int i = 0; i < rows; i++) {
-			System.out.print((rows - i) + " ");
-			for (int j = 0; j < columns; j++) {
-				printPiece(pieces[i][j], possibleMoves[i][j], (selfRow == i && selfColumn == j));
-				System.out.print(" ");
-			}
-			System.out.println();
-		}
-		System.out.println("  a b c d e f g h");
-	}
-
-	public static void printTabBoard(ChessPiece[][] pieces) {
-		int rows = pieces.length;
-		int columns = pieces[0].length;
-
-		for (int i = 0; i < rows; i++) {
-			System.out.print((rows - i) + "   ");
-			for (int j = 0; j < columns; j++) {
-				printPiece(pieces[i][j], false, false);
+				printPiece(pieces[i][j]);
 				System.out.print("   ");
 			}
-			System.out.print("\n\n");
+			System.out.print(i + "\n\n");
 		}
-		System.out.println("    a   b   c   d   e   f   g   h");
+		System.out.println("    0   1   2   3   4   5   6   7   8   9   \n");
 	}
 
-	public static void printTabBoard(ChessPiece[][] pieces, boolean[][] possibleMoves, int selfRow, int selfColumn) {
-		int rows = pieces.length;
-		int columns = pieces[0].length;
-
-		for (int i = 0; i < rows; i++) {
-			System.out.print((rows - i) + "   ");
-			for (int j = 0; j < columns; j++) {
-				printPiece(pieces[i][j], possibleMoves[i][j], (selfRow == i && selfColumn == j));
-				System.out.print("   ");
-			}
-			System.out.print("\n\n");
-		}
-		System.out.println("    a   b   c   d   e   f   g   h");
-	}
-
-	private static void printCapturedPieces(List<ChessPiece> captured) {
-		List<ChessPiece> white = captured.stream().filter(x -> x.getColor() == Color.WHITE)
-				.collect(Collectors.toList());
-		List<ChessPiece> black = captured.stream().filter(x -> x.getColor() == Color.BLACK)
-				.collect(Collectors.toList());
-		System.out.println("Captured pieces:");
-		System.out.println("White: " + WHITE_BOLD_BRIGHT + Arrays.toString(white.toArray()) + ANSI_RESET);
-		System.out.println("Black: " + YELLOW_BOLD_BRIGHT + Arrays.toString(black.toArray()) + ANSI_RESET);
+	private static void printCapturedBags(List<Bag> captured) {
+		System.out.println("Captured chests: " + YELLOW_BOLD_BRIGHT + Arrays.toString(captured.toArray()) + ANSI_RESET);
 	}
 
 }

@@ -1,15 +1,15 @@
-package chess;
+package maze;
 
 import boardgame.Board;
 import boardgame.Piece;
 import boardgame.Position;
 
-public abstract class ChessPiece extends Piece {
+public abstract class MazePiece extends Piece {
 
 	private Color color;
 	private int moveCount;
 
-	public ChessPiece(Board board, Color color) {
+	public MazePiece(Board board, Color color) {
 		super(board);
 		this.color = color;
 	}
@@ -30,12 +30,12 @@ public abstract class ChessPiece extends Piece {
 		moveCount--;
 	}
 
-	public ChessPosition getChessPosition() {
-		return ChessPosition.fromPosition(position);
+	public Position getPosition() {
+		return position;
 	}
 
 	protected boolean isThereOpponentPiece(Position position) {
-		ChessPiece p = (ChessPiece) getBoard().piece(position);
+		MazePiece p = (MazePiece) getBoard().piece(position);
 		return p != null && p.getColor() != color;
 	}
 
