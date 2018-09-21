@@ -74,9 +74,9 @@ public class UI {
 			if (color == Color.CYAN) {
 				System.out.print(ANSI_CYAN_BACKGROUND + piece + ANSI_RESET);
 			} else if (color == Color.GREEN) {
-				System.out.print(GREEN_BOLD_BRIGHT + piece + ANSI_RESET);
+				System.out.print(ANSI_GREEN_BACKGROUND + piece + ANSI_RESET);
 			} else if (color == Color.PURPLE) {
-				System.out.print(PURPLE_BOLD_BRIGHT + piece + ANSI_RESET);
+				System.out.print(ANSI_PURPLE_BACKGROUND + piece + ANSI_RESET);
 			} else if (color == Color.RED) {
 				System.out.print(RED_BOLD_BRIGHT + piece + ANSI_RESET);
 			} else if (color == Color.YELLOW) {
@@ -120,7 +120,7 @@ public class UI {
 	}
 
 	private static void printCapturedBags(List<Bag> captured) {
-		System.out.println("Captured chests: " + YELLOW_BOLD_BRIGHT + Arrays.toString(captured.toArray()) + ANSI_RESET);
+		System.out.println("Captured Bags: " + YELLOW_BOLD_BRIGHT + Arrays.toString(captured.toArray()) + ANSI_RESET);
 	}
 
 }

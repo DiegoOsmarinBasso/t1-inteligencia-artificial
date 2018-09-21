@@ -7,7 +7,7 @@ import maze.MazePiece;
 public class Agent extends MazePiece {
 
 	public Agent(Board board, Color color) {
-		super(board, color);
+		super(board, color, false);
 	}
 
 	@Override

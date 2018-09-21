@@ -7,7 +7,7 @@ import maze.MazePiece;
 public class Wall extends MazePiece {
 
 	public Wall(Board board, Color color) {
-		super(board, color);
+		super(board, color, false);
 	}
 
 	@Override

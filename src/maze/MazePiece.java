@@ -7,27 +7,20 @@ import boardgame.Position;
 public abstract class MazePiece extends Piece {
 
 	private Color color;
-	private int moveCount;
+	private boolean overwritable;
 
-	public MazePiece(Board board, Color color) {
+	public MazePiece(Board board, Color color, boolean overwritable) {
 		super(board);
 		this.color = color;
-	}
-
-	public int getMoveCount() {
-		return moveCount;
+		this.overwritable = overwritable;
 	}
 
 	public Color getColor() {
 		return color;
 	}
 
-	public void increaseMoveCount() {
-		moveCount++;
-	}
-
-	public void decreaseMoveCount() {
-		moveCount--;
+	public boolean getOverwritable() {
+		return overwritable;
 	}
 
 	public Position getPosition() {
